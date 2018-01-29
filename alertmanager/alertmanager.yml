@@ -1,0 +1,13 @@
+---
+global:
+  slack_api_url: 'https://hooks.slack.com/services/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'
+  -send_resolved: true
+route:
+  receiver: 'slack-notifications'
+
+  group_by: [alertname, datacenter, app]
+
+receivers:
+- name: 'slack-notifications'
+  slack_configs:
+   - channel: '#prometheus'

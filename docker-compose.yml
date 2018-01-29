@@ -1,0 +1,36 @@
+---
+version: '2'
+services:
+    prometheus:
+        build: ./prometheus
+        volumes:
+            - prometheus_data:/prometheus
+        command:
+            - '-config.file=/etc/prometheus/prometheus.yml'
+            - '-alertmanager.url=http://alertmanager:9093'
+        ports:
+            - '9090:9090'
+    node-exporter:
+        image: prom/node-exporter:0.12.0rc1
+        ports:
+            - '9100:9100'
+    grafana:
+        image: grafana/grafana:3.0.1
+        environment:
+            - GF_SECURITY_ADMIN_PASSWORD=secret123
+        volumes:
+            - grafana_data:/var/lib/grafana
+        depends_on:
+            - prometheus
+        ports:
+            - "3000:3000"
+    alertmanager:
+        build: ./alertmanager
+        command:
+            - '-config.file=/alertmanager.yml'
+        ports:
+            - '9093:9093'
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
